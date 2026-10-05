@@ -31,8 +31,9 @@ The site is static-friendly: `build_static.py` copies the page plus `data/offers
 2. In the repo: **Settings → Pages → Source: GitHub Actions**. The first workflow run publishes the site at
    `https://<user>.github.io/<repo>/`.
 3. Custom domain, e.g. `cap1shop.tintax.org`: in **Settings → Pages → Custom domain** enter the host name, then add a
-   DNS record at your DNS provider: `CNAME cap1shop → <user>.github.io` (on Cloudflare, leave it "DNS only"/grey cloud
-   until the certificate is issued, then you can proxy it). `config.json` → `custom_domain` writes the matching CNAME file.
+   DNS record at your DNS provider: `CNAME cap1shop → <user>.github.io` (on Cloudflare the quickest path to HTTPS is to set the record to **Proxied** and SSL/TLS mode
+   to **Full**: Cloudflare then serves its own certificate immediately. With "DNS only" you instead wait for GitHub to
+   issue a certificate, then tick *Enforce HTTPS*.) `config.json` → `custom_domain` writes the matching CNAME file.
 4. `config.json` → `referral_url`: paste your Capital One Shopping referral link and the "Join" button in the claim
    dialog will use it.
 
