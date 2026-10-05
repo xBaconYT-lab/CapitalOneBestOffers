@@ -1,0 +1,1217 @@
+{
+  "_readme": [
+    "Estimated CHEAPEST qualifying purchase (USD) for each merchant, used to rank offers by value = cashback / min_spend.",
+    "Capital One Shopping does not publish minimum purchase prices, so these are editable estimates of the entry-level plan or order.",
+    "Match order: merchant 'tiers' keyword -> merchant 'min_spend' -> generic 'tier_keywords' -> 'fallback'.",
+    "A hard threshold parsed from the offer's exclusion text (e.g. 'Only eligible for orders over $100') always wins if it is higher.",
+    "Edit freely; the web UI also lets you override any offer, which is saved in your browser."
+  ],
+  "fallback": 50,
+  "merchants": {
+    "paramountplus.com": {
+      "aliases": [
+        "Paramount+"
+      ],
+      "min_spend": 7.99,
+      "note": "Paramount+ Essential monthly plan",
+      "tiers": {
+        "annual|yearly": 59.99
+      }
+    },
+    "disneyplus.com": {
+      "aliases": [
+        "Disney+"
+      ],
+      "min_spend": 11.99,
+      "note": "Disney+ Basic (with ads) monthly",
+      "tiers": {
+        "standalone": 11.99,
+        "basic unlimited|max basic": 12.99,
+        "duo": 12.99,
+        "trio": 19.99,
+        "unlimited bundle": 29.99,
+        "upgrade|switch": 10
+      }
+    },
+    "hulu.com": {
+      "aliases": [
+        "Hulu"
+      ],
+      "min_spend": 11.99,
+      "note": "Hulu (with ads) monthly",
+      "tiers": {
+        "live": 82.99,
+        "no ads": 18.99
+      }
+    },
+    "max.com": {
+      "aliases": [
+        "Max",
+        "HBO Max"
+      ],
+      "min_spend": 10.99,
+      "note": "Max Basic (with ads) monthly"
+    },
+    "peacocktv.com": {
+      "aliases": [
+        "Peacock"
+      ],
+      "min_spend": 10.99,
+      "note": "Peacock Premium monthly"
+    },
+    "sling.com": {
+      "aliases": [
+        "Sling TV",
+        "Sling"
+      ],
+      "min_spend": 45.99,
+      "note": "Sling Orange monthly"
+    },
+    "philo.com": {
+      "aliases": [
+        "Philo"
+      ],
+      "min_spend": 28,
+      "note": "Philo monthly"
+    },
+    "fubo.tv": {
+      "aliases": [
+        "Fubo",
+        "fuboTV"
+      ],
+      "min_spend": 79.99,
+      "note": "Fubo Essential monthly"
+    },
+    "tv.apple.com": {
+      "aliases": [
+        "Apple TV+",
+        "Apple TV"
+      ],
+      "min_spend": 12.99,
+      "note": "Apple TV+ monthly"
+    },
+    "starz.com": {
+      "aliases": [
+        "STARZ"
+      ],
+      "min_spend": 10.99,
+      "note": "STARZ monthly"
+    },
+    "amcplus.com": {
+      "aliases": [
+        "AMC+"
+      ],
+      "min_spend": 8.99,
+      "note": "AMC+ monthly"
+    },
+    "mgmplus.com": {
+      "aliases": [
+        "MGM+"
+      ],
+      "min_spend": 6.99,
+      "note": "MGM+ monthly"
+    },
+    "britbox.com": {
+      "aliases": [
+        "BritBox"
+      ],
+      "min_spend": 8.99,
+      "note": "BritBox monthly"
+    },
+    "discoveryplus.com": {
+      "aliases": [
+        "discovery+"
+      ],
+      "min_spend": 5.99,
+      "note": "discovery+ (with ads) monthly"
+    },
+    "espn.com": {
+      "aliases": [
+        "ESPN",
+        "ESPN+"
+      ],
+      "min_spend": 11.99,
+      "note": "ESPN+ monthly",
+      "tiers": {
+        "unlimited": 29.99
+      }
+    },
+    "crunchyroll.com": {
+      "aliases": [
+        "Crunchyroll"
+      ],
+      "min_spend": 7.99,
+      "note": "Crunchyroll Fan monthly"
+    },
+    "directv.com": {
+      "aliases": [
+        "DIRECTV",
+        "DIRECTV STREAM"
+      ],
+      "min_spend": 84.99,
+      "note": "DIRECTV Entertainment package, first month",
+      "tiers": {
+        "satellite": 84.99,
+        "stream|internet": 86.99
+      }
+    },
+    "dish.com": {
+      "aliases": [
+        "DISH"
+      ],
+      "min_spend": 79.99,
+      "note": "DISH America's Top 120, first month"
+    },
+    "youtube.com": {
+      "aliases": [
+        "YouTube TV",
+        "YouTube Premium"
+      ],
+      "min_spend": 13.99,
+      "note": "YouTube Premium monthly",
+      "tiers": {
+        "tv": 82.99
+      }
+    },
+    "spotify.com": {
+      "aliases": [
+        "Spotify"
+      ],
+      "min_spend": 11.99,
+      "note": "Spotify Premium monthly"
+    },
+    "audible.com": {
+      "aliases": [
+        "Audible"
+      ],
+      "min_spend": 14.95,
+      "note": "Audible Premium Plus monthly"
+    },
+    "siriusxm.com": {
+      "aliases": [
+        "SiriusXM"
+      ],
+      "min_spend": 9.99,
+      "note": "SiriusXM streaming monthly"
+    },
+    "amazon.com": {
+      "aliases": [
+        "Amazon",
+        "Amazon Prime",
+        "Kindle Unlimited"
+      ],
+      "min_spend": 14.99,
+      "note": "Prime monthly"
+    },
+    "doordash.com": {
+      "aliases": [
+        "DoorDash"
+      ],
+      "min_spend": 15,
+      "note": "Typical minimum first order",
+      "tiers": {
+        "dashpass|dash pass": 9.99,
+        "non-restaurant": 15,
+        "restaurant": 15,
+        "total orders": 15
+      }
+    },
+    "ubereats.com": {
+      "aliases": [
+        "Uber Eats"
+      ],
+      "min_spend": 15,
+      "note": "Typical minimum order",
+      "tiers": {
+        "uber one|membership": 9.99
+      }
+    },
+    "grubhub.com": {
+      "aliases": [
+        "Grubhub"
+      ],
+      "min_spend": 15,
+      "note": "Typical minimum order",
+      "tiers": {
+        "grubhub+|membership": 9.99
+      }
+    },
+    "instacart.com": {
+      "aliases": [
+        "Instacart"
+      ],
+      "min_spend": 35,
+      "note": "Minimum order for standard delivery",
+      "tiers": {
+        "instacart+|membership": 9.99
+      }
+    },
+    "shipt.com": {
+      "aliases": [
+        "Shipt"
+      ],
+      "min_spend": 10.99,
+      "note": "Shipt monthly membership"
+    },
+    "walmart.com": {
+      "aliases": [
+        "Walmart",
+        "Walmart+"
+      ],
+      "min_spend": 12.95,
+      "note": "Walmart+ monthly",
+      "tiers": {
+        "walmart\\+|membership": 12.95
+      }
+    },
+    "hellofresh.com": {
+      "aliases": [
+        "HelloFresh"
+      ],
+      "min_spend": 55,
+      "note": "Smallest box (2 people, 3 meals) + shipping"
+    },
+    "blueapron.com": {
+      "aliases": [
+        "Blue Apron"
+      ],
+      "min_spend": 60,
+      "note": "Smallest box + shipping"
+    },
+    "factor75.com": {
+      "aliases": [
+        "Factor",
+        "Factor75"
+      ],
+      "min_spend": 80,
+      "note": "6 meals/week + shipping"
+    },
+    "homechef.com": {
+      "aliases": [
+        "Home Chef"
+      ],
+      "min_spend": 60,
+      "note": "Smallest box + shipping"
+    },
+    "everyplate.com": {
+      "aliases": [
+        "EveryPlate"
+      ],
+      "min_spend": 40,
+      "note": "Smallest box + shipping"
+    },
+    "greenchef.com": {
+      "aliases": [
+        "Green Chef"
+      ],
+      "min_spend": 80,
+      "note": "Smallest box + shipping"
+    },
+    "cookunity.com": {
+      "aliases": [
+        "CookUnity"
+      ],
+      "min_spend": 56,
+      "note": "4 meals/week + shipping"
+    },
+    "hungryroot.com": {
+      "aliases": [
+        "Hungryroot"
+      ],
+      "min_spend": 70,
+      "note": "Smallest weekly delivery"
+    },
+    "gruns.co": {
+      "aliases": [
+        "Gruns"
+      ],
+      "min_spend": 52,
+      "note": "One bag, subscription price"
+    },
+    "drinkag1.com": {
+      "aliases": [
+        "AG1",
+        "Athletic Greens"
+      ],
+      "min_spend": 79,
+      "note": "Monthly subscription"
+    },
+    "ritual.com": {
+      "aliases": [
+        "Ritual"
+      ],
+      "min_spend": 33,
+      "note": "Monthly multivitamin"
+    },
+    "seed.com": {
+      "aliases": [
+        "Seed"
+      ],
+      "min_spend": 49.99,
+      "note": "Monthly DS-01"
+    },
+    "verizonwireless.com": {
+      "aliases": [
+        "Verizon",
+        "Verizon Wireless"
+      ],
+      "min_spend": 35,
+      "note": "Cheapest prepaid plan, 1 month (postpaid ~$65)",
+      "tiers": {
+        "new service|contract": 35,
+        "home internet|5g home": 50,
+        "additional|add a line|line": 35,
+        "device|phone": 400
+      }
+    },
+    "verizon.com": {
+      "aliases": [
+        "Verizon Fios"
+      ],
+      "min_spend": 49.99,
+      "note": "Fios 300 Mbps, 1 month"
+    },
+    "boostmobile.com": {
+      "aliases": [
+        "Boost Mobile"
+      ],
+      "min_spend": 25,
+      "note": "Boost Unlimited plan, 1 month"
+    },
+    "visible.com": {
+      "aliases": [
+        "Visible"
+      ],
+      "min_spend": 25,
+      "note": "Visible basic plan, 1 month"
+    },
+    "totalwireless.com": {
+      "aliases": [
+        "Total Wireless"
+      ],
+      "min_spend": 25,
+      "note": "Total Base plan, 1 month"
+    },
+    "mintmobile.com": {
+      "aliases": [
+        "Mint Mobile",
+        "mintmobile.com"
+      ],
+      "min_spend": 45,
+      "note": "3-month 5GB plan (offer text may require >$100 order)",
+      "tiers": {
+        "unlimited": 90,
+        "mhi|home internet": 100,
+        "device": 100
+      }
+    },
+    "t-mobile.com": {
+      "aliases": [
+        "T-Mobile",
+        "T-Mobile Home Internet"
+      ],
+      "min_spend": 50,
+      "note": "T-Mobile Home Internet Rely, 1 month",
+      "tiers": {
+        "home internet|internet": 50,
+        "wireless|plan|line": 50
+      }
+    },
+    "att.com": {
+      "aliases": [
+        "AT&T",
+        "AT&T Fiber",
+        "AT&T Wireless"
+      ],
+      "min_spend": 55,
+      "note": "AT&T Fiber 300, 1 month",
+      "tiers": {
+        "fiber|internet": 55,
+        "wireless|line|plan": 50.99
+      }
+    },
+    "xfinity.com": {
+      "aliases": [
+        "Xfinity",
+        "Xfinity Mobile"
+      ],
+      "min_spend": 40,
+      "note": "Entry internet plan, 1 month",
+      "tiers": {
+        "mobile|line": 40,
+        "internet": 40
+      }
+    },
+    "spectrum.com": {
+      "aliases": [
+        "Spectrum",
+        "Spectrum Mobile"
+      ],
+      "min_spend": 50,
+      "note": "Spectrum Internet, 1 month",
+      "tiers": {
+        "mobile|line": 30
+      }
+    },
+    "cricketwireless.com": {
+      "aliases": [
+        "Cricket Wireless",
+        "Cricket"
+      ],
+      "min_spend": 30,
+      "note": "Cricket 5GB plan, 1 month"
+    },
+    "metrobyt-mobile.com": {
+      "aliases": [
+        "Metro by T-Mobile",
+        "Metro"
+      ],
+      "min_spend": 40,
+      "note": "Metro plan, 1 month"
+    },
+    "straighttalk.com": {
+      "aliases": [
+        "Straight Talk"
+      ],
+      "min_spend": 35,
+      "note": "Straight Talk plan, 1 month"
+    },
+    "tello.com": {
+      "aliases": [
+        "Tello"
+      ],
+      "min_spend": 5,
+      "note": "Tello custom plan, 1 month"
+    },
+    "usmobile.com": {
+      "aliases": [
+        "US Mobile"
+      ],
+      "min_spend": 10,
+      "note": "US Mobile starter plan, 1 month"
+    },
+    "fi.google.com": {
+      "aliases": [
+        "Google Fi"
+      ],
+      "min_spend": 20,
+      "note": "Google Fi Flexible, 1 month"
+    },
+    "consumercellular.com": {
+      "aliases": [
+        "Consumer Cellular"
+      ],
+      "min_spend": 20,
+      "note": "Entry plan, 1 month"
+    },
+    "frontier.com": {
+      "aliases": [
+        "Frontier"
+      ],
+      "min_spend": 29.99,
+      "note": "Fiber 200, 1 month"
+    },
+    "cox.com": {
+      "aliases": [
+        "Cox"
+      ],
+      "min_spend": 50,
+      "note": "Entry internet, 1 month"
+    },
+    "optimum.com": {
+      "aliases": [
+        "Optimum"
+      ],
+      "min_spend": 40,
+      "note": "Entry internet, 1 month"
+    },
+    "quantumfiber.com": {
+      "aliases": [
+        "Quantum Fiber",
+        "CenturyLink"
+      ],
+      "min_spend": 50,
+      "note": "Entry fiber, 1 month"
+    },
+    "hughesnet.com": {
+      "aliases": [
+        "Hughesnet"
+      ],
+      "min_spend": 49.99,
+      "note": "Entry plan, 1 month"
+    },
+    "viasat.com": {
+      "aliases": [
+        "Viasat"
+      ],
+      "min_spend": 69.99,
+      "note": "Entry plan, 1 month"
+    },
+    "starlink.com": {
+      "aliases": [
+        "Starlink"
+      ],
+      "min_spend": 469,
+      "note": "Hardware + first month"
+    },
+    "nordvpn.com": {
+      "aliases": [
+        "NordVPN"
+      ],
+      "min_spend": 12.99,
+      "note": "1-month plan (multi-year plans ~$60-100 upfront)"
+    },
+    "expressvpn.com": {
+      "aliases": [
+        "ExpressVPN"
+      ],
+      "min_spend": 12.99,
+      "note": "1-month plan"
+    },
+    "surfshark.com": {
+      "aliases": [
+        "Surfshark"
+      ],
+      "min_spend": 15.45,
+      "note": "1-month plan"
+    },
+    "norton.com": {
+      "aliases": [
+        "Norton",
+        "Norton US"
+      ],
+      "min_spend": 29.99,
+      "note": "First-year AntiVirus Plus"
+    },
+    "mcafee.com": {
+      "aliases": [
+        "McAfee"
+      ],
+      "min_spend": 39.99,
+      "note": "First-year plan"
+    },
+    "1password.com": {
+      "aliases": [
+        "1Password"
+      ],
+      "min_spend": 35.88,
+      "note": "Individual, billed annually"
+    },
+    "dashlane.com": {
+      "aliases": [
+        "Dashlane"
+      ],
+      "min_spend": 59.88,
+      "note": "Premium, billed annually"
+    },
+    "adobe.com": {
+      "aliases": [
+        "Adobe"
+      ],
+      "min_spend": 22.99,
+      "note": "Single app monthly"
+    },
+    "microsoft.com": {
+      "aliases": [
+        "Microsoft",
+        "Microsoft 365"
+      ],
+      "min_spend": 9.99,
+      "note": "Microsoft 365 Personal monthly"
+    },
+    "grammarly.com": {
+      "aliases": [
+        "Grammarly"
+      ],
+      "min_spend": 30,
+      "note": "Pro monthly"
+    },
+    "squarespace.com": {
+      "aliases": [
+        "Squarespace"
+      ],
+      "min_spend": 25,
+      "note": "Personal plan, monthly"
+    },
+    "wix.com": {
+      "aliases": [
+        "Wix"
+      ],
+      "min_spend": 17,
+      "note": "Light plan, monthly"
+    },
+    "godaddy.com": {
+      "aliases": [
+        "GoDaddy"
+      ],
+      "min_spend": 12,
+      "note": "One domain"
+    },
+    "bluehost.com": {
+      "aliases": [
+        "Bluehost"
+      ],
+      "min_spend": 35.4,
+      "note": "12-month basic hosting"
+    },
+    "hostinger.com": {
+      "aliases": [
+        "Hostinger"
+      ],
+      "min_spend": 36,
+      "note": "12-month basic hosting"
+    },
+    "shopify.com": {
+      "aliases": [
+        "Shopify"
+      ],
+      "min_spend": 1,
+      "note": "$1 first month promo"
+    },
+    "quickbooks.intuit.com": {
+      "aliases": [
+        "QuickBooks",
+        "Intuit QuickBooks"
+      ],
+      "min_spend": 17.5,
+      "note": "Simple Start, promo month"
+    },
+    "turbotax.intuit.com": {
+      "aliases": [
+        "TurboTax"
+      ],
+      "min_spend": 39,
+      "note": "Deluxe federal"
+    },
+    "hrblock.com": {
+      "aliases": [
+        "H&R Block"
+      ],
+      "min_spend": 35,
+      "note": "Deluxe online"
+    },
+    "legalzoom.com": {
+      "aliases": [
+        "LegalZoom"
+      ],
+      "min_spend": 49,
+      "note": "Basic filing + state fees"
+    },
+    "rocketmoney.com": {
+      "aliases": [
+        "Rocket Money"
+      ],
+      "min_spend": 6,
+      "note": "Premium monthly"
+    },
+    "monarchmoney.com": {
+      "aliases": [
+        "Monarch",
+        "Monarch Money"
+      ],
+      "min_spend": 14.99,
+      "note": "Monthly plan (annual $99.99)",
+      "tiers": {
+        "annual": 99.99
+      }
+    },
+    "experian.com": {
+      "aliases": [
+        "Experian"
+      ],
+      "min_spend": 24.99,
+      "note": "Premium monthly"
+    },
+    "lemonade.com": {
+      "aliases": [
+        "Lemonade"
+      ],
+      "min_spend": 5,
+      "note": "Renters policy, 1 month"
+    },
+    "noom.com": {
+      "aliases": [
+        "Noom"
+      ],
+      "min_spend": 70,
+      "note": "Monthly plan"
+    },
+    "weightwatchers.com": {
+      "aliases": [
+        "WeightWatchers",
+        "WW"
+      ],
+      "min_spend": 23,
+      "note": "Core monthly"
+    },
+    "headspace.com": {
+      "aliases": [
+        "Headspace"
+      ],
+      "min_spend": 12.99,
+      "note": "Monthly"
+    },
+    "calm.com": {
+      "aliases": [
+        "Calm"
+      ],
+      "min_spend": 69.99,
+      "note": "Annual only"
+    },
+    "masterclass.com": {
+      "aliases": [
+        "MasterClass"
+      ],
+      "min_spend": 120,
+      "note": "Annual only"
+    },
+    "skillshare.com": {
+      "aliases": [
+        "Skillshare"
+      ],
+      "min_spend": 167.88,
+      "note": "Annual only"
+    },
+    "coursera.org": {
+      "aliases": [
+        "Coursera"
+      ],
+      "min_spend": 59,
+      "note": "Coursera Plus monthly"
+    },
+    "udemy.com": {
+      "aliases": [
+        "Udemy"
+      ],
+      "min_spend": 15,
+      "note": "One course on sale"
+    },
+    "babbel.com": {
+      "aliases": [
+        "Babbel"
+      ],
+      "min_spend": 17.95,
+      "note": "Monthly"
+    },
+    "rosettastone.com": {
+      "aliases": [
+        "Rosetta Stone"
+      ],
+      "min_spend": 15.99,
+      "note": "Monthly"
+    },
+    "chegg.com": {
+      "aliases": [
+        "Chegg"
+      ],
+      "min_spend": 19.95,
+      "note": "Study monthly"
+    },
+    "scribd.com": {
+      "aliases": [
+        "Scribd",
+        "Everand"
+      ],
+      "min_spend": 11.99,
+      "note": "Monthly"
+    },
+    "hims.com": {
+      "aliases": [
+        "Hims"
+      ],
+      "min_spend": 20,
+      "note": "Entry monthly plan"
+    },
+    "forhers.com": {
+      "aliases": [
+        "Hers"
+      ],
+      "min_spend": 20,
+      "note": "Entry monthly plan"
+    },
+    "keeps.com": {
+      "aliases": [
+        "Keeps"
+      ],
+      "min_spend": 25,
+      "note": "Monthly treatment"
+    },
+    "nutrafol.com": {
+      "aliases": [
+        "Nutrafol"
+      ],
+      "min_spend": 88,
+      "note": "One month"
+    },
+    "care.com": {
+      "aliases": [
+        "Care.com"
+      ],
+      "min_spend": 39,
+      "note": "Premium monthly"
+    },
+    "stitchfix.com": {
+      "aliases": [
+        "Stitch Fix"
+      ],
+      "min_spend": 20,
+      "note": "Styling fee"
+    },
+    "fabletics.com": {
+      "aliases": [
+        "Fabletics"
+      ],
+      "min_spend": 24.95,
+      "note": "VIP first outfit"
+    },
+    "savagex.com": {
+      "aliases": [
+        "Savage X Fenty"
+      ],
+      "min_spend": 49.95,
+      "note": "VIP first month"
+    },
+    "justfab.com": {
+      "aliases": [
+        "JustFab"
+      ],
+      "min_spend": 39.95,
+      "note": "VIP first item"
+    },
+    "adoreme.com": {
+      "aliases": [
+        "Adore Me"
+      ],
+      "min_spend": 39.95,
+      "note": "VIP first set"
+    },
+    "renttherunway.com": {
+      "aliases": [
+        "Rent the Runway"
+      ],
+      "min_spend": 89,
+      "note": "Entry monthly plan"
+    },
+    "nakedwines.com": {
+      "aliases": [
+        "Naked Wines"
+      ],
+      "min_spend": 40,
+      "note": "First case promo"
+    },
+    "firstleaf.com": {
+      "aliases": [
+        "Firstleaf"
+      ],
+      "min_spend": 39.95,
+      "note": "First box"
+    },
+    "winc.com": {
+      "aliases": [
+        "Winc"
+      ],
+      "min_spend": 39,
+      "note": "First box"
+    },
+    "barkbox.com": {
+      "aliases": [
+        "BarkBox"
+      ],
+      "min_spend": 23,
+      "note": "Monthly box"
+    },
+    "myollie.com": {
+      "aliases": [
+        "Ollie"
+      ],
+      "min_spend": 20,
+      "note": "First box promo"
+    },
+    "thefarmersdog.com": {
+      "aliases": [
+        "The Farmer's Dog"
+      ],
+      "min_spend": 20,
+      "note": "First box promo"
+    },
+    "nomnomnow.com": {
+      "aliases": [
+        "Nom Nom"
+      ],
+      "min_spend": 30,
+      "note": "Trial box"
+    },
+    "chewy.com": {
+      "aliases": [
+        "Chewy"
+      ],
+      "min_spend": 15,
+      "note": "Small first order"
+    },
+    "petsmart.com": {
+      "aliases": [
+        "PetSmart"
+      ],
+      "min_spend": 15,
+      "note": "Small order"
+    },
+    "harrys.com": {
+      "aliases": [
+        "Harry's"
+      ],
+      "min_spend": 3,
+      "note": "Trial set"
+    },
+    "dollarshaveclub.com": {
+      "aliases": [
+        "Dollar Shave Club"
+      ],
+      "min_spend": 5,
+      "note": "Starter set"
+    },
+    "manscaped.com": {
+      "aliases": [
+        "MANSCAPED"
+      ],
+      "min_spend": 30,
+      "note": "Entry trimmer"
+    },
+    "getquip.com": {
+      "aliases": [
+        "quip"
+      ],
+      "min_spend": 25,
+      "note": "Starter brush"
+    },
+    "simplisafe.com": {
+      "aliases": [
+        "SimpliSafe"
+      ],
+      "min_spend": 250,
+      "note": "Starter kit"
+    },
+    "ring.com": {
+      "aliases": [
+        "Ring"
+      ],
+      "min_spend": 100,
+      "note": "Video doorbell"
+    },
+    "adt.com": {
+      "aliases": [
+        "ADT"
+      ],
+      "min_spend": 100,
+      "note": "Install + first month"
+    },
+    "vivint.com": {
+      "aliases": [
+        "Vivint"
+      ],
+      "min_spend": 100,
+      "note": "Install + first month"
+    },
+    "xbox.com": {
+      "aliases": [
+        "Xbox",
+        "Xbox Game Pass"
+      ],
+      "min_spend": 10.99,
+      "note": "Game Pass Core monthly"
+    },
+    "playstation.com": {
+      "aliases": [
+        "PlayStation",
+        "PlayStation Direct",
+        "PlayStation Plus"
+      ],
+      "min_spend": 9.99,
+      "note": "PS Plus Essential monthly"
+    },
+    "nintendo.com": {
+      "aliases": [
+        "Nintendo"
+      ],
+      "min_spend": 19.99,
+      "note": "Switch Online annual"
+    },
+    "acorns.com": {
+      "aliases": [
+        "Acorns"
+      ],
+      "min_spend": 3,
+      "note": "Bronze monthly"
+    },
+    "chime.com": {
+      "aliases": [
+        "Chime"
+      ],
+      "min_spend": 0,
+      "note": "Free account (offer may need a deposit)"
+    },
+    "sofi.com": {
+      "aliases": [
+        "SoFi"
+      ],
+      "min_spend": 0,
+      "note": "Free account (offer may need a deposit)"
+    },
+    "robinhood.com": {
+      "aliases": [
+        "Robinhood"
+      ],
+      "min_spend": 0,
+      "note": "Free account (offer may need a deposit)"
+    },
+    "betterment.com": {
+      "aliases": [
+        "Betterment"
+      ],
+      "min_spend": 4,
+      "note": "Monthly fee"
+    },
+    "stubhub.com": {
+      "aliases": [
+        "StubHub"
+      ],
+      "min_spend": 50,
+      "note": "Cheap ticket"
+    },
+    "expedia.com": {
+      "aliases": [
+        "Expedia"
+      ],
+      "min_spend": 100,
+      "note": "One hotel night"
+    },
+    "booking.com": {
+      "aliases": [
+        "Booking.com"
+      ],
+      "min_spend": 100,
+      "note": "One hotel night"
+    },
+    "hotels.com": {
+      "aliases": [
+        "Hotels.com"
+      ],
+      "min_spend": 100,
+      "note": "One hotel night"
+    },
+    "priceline.com": {
+      "aliases": [
+        "Priceline"
+      ],
+      "min_spend": 100,
+      "note": "One hotel night"
+    },
+    "vrbo.com": {
+      "aliases": [
+        "Vrbo"
+      ],
+      "min_spend": 150,
+      "note": "One night"
+    },
+    "marriott.com": {
+      "aliases": [
+        "Marriott"
+      ],
+      "min_spend": 150,
+      "note": "One hotel night"
+    },
+    "brightspeed.com": {
+      "aliases": [
+        "Brightspeed"
+      ],
+      "min_spend": 49,
+      "note": "Brightspeed Fiber 300, 1 month"
+    },
+    "fiber.t-mobile.com": {
+      "aliases": [
+        "T-Mobile Fiber Internet",
+        "T-Mobile Fiber"
+      ],
+      "min_spend": 80,
+      "note": "T-Mobile Fiber 500, 1 month"
+    }
+  },
+  "tier_keywords": [
+    {
+      "match": "dashpass|dash pass|sign ?up|signup|trial|membership|subscription|monthly|plan",
+      "min_spend": 10,
+      "note": "Looks like a monthly subscription or sign-up"
+    },
+    {
+      "match": "first order|first purchase|order",
+      "min_spend": 20,
+      "note": "Looks like a first order"
+    },
+    {
+      "match": "annual|yearly|year",
+      "min_spend": 100,
+      "note": "Looks like an annual plan"
+    },
+    {
+      "match": "home internet|internet|new service|contract|activation|add a line|additional line|line",
+      "min_spend": 50,
+      "note": "Looks like a telecom activation (first month)"
+    },
+    {
+      "match": "bundle",
+      "min_spend": 25,
+      "note": "Looks like a bundle"
+    },
+    {
+      "match": "device|phone|tablet|laptop|tv|appliance|console",
+      "min_spend": 300,
+      "note": "Looks like hardware"
+    },
+    {
+      "match": "mattress|furniture|sofa",
+      "min_spend": 500,
+      "note": "Looks like furniture"
+    },
+    {
+      "match": "hotel|flight|travel|booking|cruise|vacation",
+      "min_spend": 150,
+      "note": "Looks like travel"
+    }
+  ],
+  "merchant_keywords": [
+    {
+      "match": "fiber|home internet|broadband",
+      "min_spend": 50,
+      "note": "Looks like an internet provider (1 month)"
+    },
+    {
+      "match": "internet|fiber|broadband",
+      "min_spend": 50,
+      "note": "Looks like an internet provider (1 month)"
+    },
+    {
+      "match": "mobile|wireless|cellular|telecom",
+      "min_spend": 25,
+      "note": "Looks like a phone carrier (1 month plan)"
+    },
+    {
+      "match": "\\+$|plus|tv|stream|music|audio",
+      "min_spend": 10,
+      "note": "Looks like a streaming service (1 month)"
+    },
+    {
+      "match": "vpn|antivirus|security",
+      "min_spend": 12.99,
+      "note": "Looks like software (1 month)"
+    },
+    {
+      "match": "meal|fresh|chef|kitchen|food|unity",
+      "min_spend": 60,
+      "note": "Looks like a meal kit (first box)"
+    },
+    {
+      "match": "insurance",
+      "min_spend": 50,
+      "note": "Looks like insurance (1 month)"
+    }
+  ]
+}

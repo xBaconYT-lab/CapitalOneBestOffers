@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Best Dollar Offers</title>
+<meta name="description" content="Capital One Shopping's fixed-dollar cashback offers, ranked by how much you get back per dollar you have to spend.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23d03027'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='white' font-family='system-ui' font-weight='700'%3E$%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-inner">
+    <div class="brand">
+      <span class="mark">$</span>
+      <div>
+        <h1>Best Dollar Offers</h1>
+        <p class="sub">Capital One Shopping, ranked by cashback ÷ cheapest purchase you must make</p>
+      </div>
+    </div>
+    <div class="status">
+      <span id="updated" class="muted">Loading…</span>
+      <button id="refresh" class="btn" type="button" title="Pull today's offers again">↻ Refresh</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="toolbar" aria-label="Filters">
+    <div class="seg" role="tablist">
+      <button class="seg-btn is-on" data-view="fixed" role="tab" aria-selected="true">Dollar offers</button>
+      <button class="seg-btn" data-view="all" role="tab" aria-selected="false">All offers</button>
+    </div>
+    <label class="field">
+      <span>Sort</span>
+      <select id="sort">
+        <option value="value">Best value (cashback ÷ spend)</option>
+        <option value="amount">Biggest cashback</option>
+        <option value="net">Biggest profit</option>
+        <option value="ending">Ending soonest</option>
+        <option value="new">New today first</option>
+      </select>
+    </label>
+    <label class="field grow">
+      <span>Search</span>
+      <input id="search" type="search" placeholder="Merchant, tier, keyword…" autocomplete="off">
+    </label>
+    <label class="check">
+      <input id="hideBig" type="checkbox">
+      <span>Hide offers that need a $100+ purchase</span>
+    </label>
+  </section>
+
+  <section id="notice" class="notice" hidden></section>
+
+  <section id="podium" class="podium" aria-label="Top picks"></section>
+
+  <section class="list-head">
+    <h2 id="listTitle">All dollar offers</h2>
+    <span id="count" class="muted"></span>
+  </section>
+  <section id="list" class="list" aria-live="polite"></section>
+
+  <section class="howto">
+    <h2>How the ranking works</h2>
+    <ul>
+      <li><strong>Value</strong> = cashback ÷ the cheapest purchase that unlocks it. $20 back on an $8 plan is 2.5× back. $100 back on a $200 subscription is only 0.5×, so it is listed but not on top.</li>
+      <li><strong>Min spend</strong> is an estimate. Capital One does not publish it, so it comes from the offer's own fine print when it states a threshold, otherwise from an editable table of entry-level prices. Click any amount to set your own; it is remembered in this browser.</li>
+      <li><strong>Profit</strong> means the cashback is bigger than the purchase itself.</li>
+      <li>Data comes from Capital One Shopping's public "Trending Offers" feed and refreshes automatically a few times a day. Offers are usually for new customers only; read the fine print before buying.</li>
+    </ul>
+  </section>
+</main>
+
+<footer class="wrap foot muted">Not affiliated with Capital One. Estimates can be wrong; the merchant's checkout price is what counts.</footer>
+
+<template id="card-tpl">
+  <article class="card">
+    <div class="rank"></div>
+    <div class="logo-wrap"><img class="logo" alt="" loading="lazy"><span class="logo-fallback"></span></div>
+    <div class="main">
+      <div class="title-row">
+        <h3 class="merchant"></h3>
+        <span class="chips"></span>
+      </div>
+      <div class="tier-name muted"></div>
+      <div class="facts">
+        <div class="fact cash"><span class="big"></span><span class="lbl">cashback</span></div>
+        <div class="fact spend"><button type="button" class="spend-btn" title="Click to set the purchase price you'd actually pay"></button><span class="lbl">min spend <span class="src"></span></span></div>
+        <div class="fact ratio"><span class="big"></span><span class="lbl">back per $1</span></div>
+        <div class="fact net"><span class="big"></span><span class="lbl">net</span></div>
+      </div>
+      <div class="bar"><div class="bar-fill"></div></div>
+      <div class="verdict"></div>
+    </div>
+    <div class="actions">
+      <a class="btn primary go" target="_blank" rel="noopener">Get offer</a>
+      <button type="button" class="btn ghost more" aria-expanded="false">Details</button>
+    </div>
+    <div class="details" hidden>
+      <div class="tiers"></div>
+      <p class="note"></p>
+      <p class="excl"></p>
+      <p class="meta muted"></p>
+    </div>
+  </article>
+</template>
+
+<script src="/app.js"></script>
+</body>
+</html>
