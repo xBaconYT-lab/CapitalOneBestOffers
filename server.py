@@ -107,6 +107,15 @@ class Handler(SimpleHTTPRequestHandler):
             self.send_response(204)
             self.end_headers()
             return None
+        if path == "/config.json":
+            with open(os.path.join(HERE, "config.json"), "rb") as fh:
+                data = fh.read()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Cache-Control", "no-cache")
+            self.send_header("Content-Length", str(len(data)))
+            self.end_headers()
+            return self.wfile.write(data)
         if path == "/":
             self.path = "/index.html"
         elif path.startswith("/static/"):

@@ -1,0 +1,55 @@
+name: Refresh offers and publish
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"   # every 6 hours
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - id: pages
+        uses: actions/configure-pages@v5
+      - name: Keep yesterday's list so "NEW today" badges work
+        run: |
+          mkdir -p data/history
+          url="${{ steps.pages.outputs.base_url }}/data/offers.json"
+          if curl -fsSL "$url" -o /tmp/prev.json; then
+            day=$(python3 -c "import json;print(json.load(open('/tmp/prev.json'))['generated_local'][:10])")
+            cp /tmp/prev.json "data/history/$day.json" && echo "previous publish: $day"
+          else
+            echo "no previous publish yet"
+          fi
+      - name: Pull today's offers from Capital One Shopping
+        run: python scraper.py --calls 8
+      - name: Build static site
+        run: python build_static.py
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

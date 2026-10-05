@@ -1,0 +1,6 @@
+{
+  "_readme": "Site settings. referral_url: your Capital One Shopping referral link (shown as the Join button for visitors who don't have an account yet). custom_domain: used for the CNAME file in the static build.",
+  "site_name": "Best Dollar Offers",
+  "referral_url": "",
+  "custom_domain": "cap1shop.tintax.org"
+}

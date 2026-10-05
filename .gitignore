@@ -3,3 +3,4 @@ data/offers.json
 data/offers.json.tmp
 data/history/
 .DS_Store
+dist/

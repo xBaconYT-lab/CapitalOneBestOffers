@@ -96,6 +96,25 @@ def feed_payload(country):
     }
 
 
+SITEMAP_URL = BASE + "/sitemap-merchant.xml"
+
+
+def fetch_store_domains(session, log=print):
+    """Domains that have a public store page at /s/<domain>/coupon (from the merchant sitemap)."""
+    try:
+        xml = session.get(SITEMAP_URL)
+    except Exception as exc:
+        log(f"  (merchant sitemap unavailable: {exc})")
+        return set()
+    domains = set(re.findall(r"/s/([^/<]+)/", xml))
+    log(f"  merchant sitemap: {len(domains)} store pages")
+    return domains
+
+
+def store_url(domain):
+    return f"{BASE}/s/{domain}/coupon" if domain else None
+
+
 def fetch_pool(calls=8, country="US", log=print):
     """Each feed call returns a ~100 item sample of a larger pool, so call it several times and union."""
     session = Session()
@@ -111,6 +130,7 @@ def fetch_pool(calls=8, country="US", log=print):
     except Exception as exc:  # SSR decoding is only a bonus source
         log(f"  (could not decode server-rendered feed: {exc})")
 
+    store_domains = fetch_store_domains(session, log)
     payload = feed_payload(country)
 
     def one_call(i):
@@ -133,7 +153,7 @@ def fetch_pool(calls=8, country="US", log=print):
             f"{len(data.get('events') or [])} events, {len(data.get('webCarouselEvents') or [])} carousel")
     if ok == 0 and not raw:
         raise RuntimeError("every feed call failed – is capitaloneshopping.com reachable?")
-    return raw
+    return raw, store_domains
 
 
 def _collect(data, batch):
@@ -256,14 +276,19 @@ def merge(normalised):
     return list(merged.values())
 
 
-def score(offers, table):
+def score(offers, table, store_domains=()):
     for offer in offers:
-        threshold = minspend.parse_threshold(offer["exclusions"])
-        offer["parsed_threshold"] = threshold
+        cond = minspend.parse_conditions(offer["exclusions"])
+        offer["conditions"] = cond
+        offer["parsed_threshold"] = cond["threshold"]
+        # The sitemap is region-locked from some countries; when we can't read it, trust the known URL pattern.
+        offer["store_url"] = store_url(offer["domain"]) if (not store_domains or offer["domain"] in store_domains) else None
+        offer["store_url_verified"] = bool(store_domains) and offer["domain"] in store_domains
         for tier in offer["tiers"]:
             if offer["reward_type"] == "fixed":
-                est = minspend.resolve(table, offer["domain"], offer["merchant"], tier["name"], offer["headline"], offer["exclusions"])
-                tier.update({"min_spend": est["min_spend"], "min_spend_source": est["source"], "min_spend_note": est["note"]})
+                est = minspend.resolve(table, offer["domain"], offer["merchant"], tier["name"], offer["headline"], offer["exclusions"], cond)
+                tier.update({"min_spend": est["min_spend"], "min_spend_base": est["base"], "min_spend_months": est["months"],
+                             "min_spend_source": est["source"], "min_spend_note": est["note"]})
                 ms = tier["min_spend"]
                 tier["ratio"] = (tier["amount"] / ms) if ms > 0 else None  # None => free, infinite value
                 tier["net"] = tier["amount"] - ms
@@ -303,9 +328,9 @@ def mark_new(offers, today):
 
 def run(calls=8, country="US", log=print):
     table = minspend.load_table()
-    raw = fetch_pool(calls=calls, country=country, log=log)
+    raw, store_domains = fetch_pool(calls=calls, country=country, log=log)
     normalised = [n for n in (normalise(*r) for r in raw) if n]
-    offers = score(merge(normalised), table)
+    offers = score(merge(normalised), table, store_domains)
     now = dt.datetime.now(dt.timezone.utc)
     today = now.astimezone().strftime("%Y-%m-%d")
     compared_to = mark_new(offers, today)
@@ -348,4 +373,5 @@ if __name__ == "__main__":
         for o in [x for x in res["offers"] if x["reward_type"] == "fixed"][:12]:
             t = o["tiers"][o["best_tier_index"]]
             ratio = "free" if t["ratio"] is None else f"{t['ratio']:.2f}x"
-            print(f"  #{o['rank']:<3} {o['merchant'][:28]:<28} {o['cashback_text']:<14} min ~${t['min_spend']:<7g} {ratio:<7} [{t['min_spend_source']}] {t['name'][:40]}")
+            months = f"x{t['min_spend_months']}" if t.get('min_spend_months', 1) > 1 else "  "
+            print(f"  #{o['rank']:<3} {o['merchant'][:26]:<26} {o['cashback_text']:<13} min ~${t['min_spend']:<7g} {months} {ratio:<7} [{t['min_spend_source']}] {', '.join(o['conditions']['tags'][:3])}")

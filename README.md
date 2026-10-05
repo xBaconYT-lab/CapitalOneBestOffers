@@ -22,12 +22,38 @@ Then open <http://localhost:8787>. No dependencies beyond Python 3.9+.
 - `PORT=9000 REFRESH_HOURS=12 FEED_CALLS=8 python3 server.py` to tweak.
 - `python3 scraper.py` runs one pull from the terminal and prints the top offers.
 
+## Put it online (so others can use it)
+
+The site is static-friendly: `build_static.py` copies the page plus `data/offers.json` into `dist/`, and
+`.github/workflows/pages.yml` re-runs the scraper **every 6 hours** on GitHub Actions and publishes `dist/` to GitHub Pages.
+
+1. Push this folder to a GitHub repository (public or private; Pages on private repos needs a paid plan).
+2. In the repo: **Settings → Pages → Source: GitHub Actions**. The first workflow run publishes the site at
+   `https://<user>.github.io/<repo>/`.
+3. Custom domain, e.g. `cap1shop.tintax.org`: in **Settings → Pages → Custom domain** enter the host name, then add a
+   DNS record at your DNS provider: `CNAME cap1shop → <user>.github.io` (on Cloudflare, leave it "DNS only"/grey cloud
+   until the certificate is issued, then you can proxy it). `config.json` → `custom_domain` writes the matching CNAME file.
+4. `config.json` → `referral_url`: paste your Capital One Shopping referral link and the "Join" button in the claim
+   dialog will use it.
+
+Alternatives: `Dockerfile` runs the dynamic server (with the Refresh button) on Fly.io / Render / a VPS, or run
+`server.py` on a Mac and expose it with a Cloudflare Tunnel.
+
+### Visitors never leave through our link
+
+"Get offer" opens a dialog that sends the visitor to the merchant's page **on capitaloneshopping.com**
+(`/s/<domain>/coupon`) where they press *Get this offer* while signed in to their own account. The tracking links the
+feed hands out are tied to the session that fetched them, so they are not used for visitors.
+
 ## Where the "min spend" comes from
 
 Capital One Shopping does not publish a minimum purchase price, so each tier's estimate is resolved in this order:
 
 1. **Your override** – click any min-spend amount in the UI (saved in your browser).
 2. **parsed** – a hard threshold stated in the offer's fine print, e.g. "Only eligible for orders over $100".
+   The fine print is also read for commitments: "subscribe for 2 consecutive months" or "stay connected for another
+   40 days" multiplies the monthly estimate by that many months, and requirements such as "new customers only" or
+   "devices must be $400+" are shown as tags on the card (`minspend.parse_conditions`).
 3. **curated** – `data/min_spend.json`, an editable table of entry-level prices (cheapest plan / typical first order).
 4. **estimated** – keyword heuristics on the tier name ("DashPass Sign Up" → monthly subscription, "New Service Contracts" → one month of service).
 5. **unknown** – a flat fallback, flagged so you know to set it.
@@ -39,7 +65,11 @@ Edit `data/min_spend.json` to add merchants; changes apply on the next refresh.
 | File | Purpose |
 | --- | --- |
 | `scraper.py` | Fetches the feed (several sampled calls + events + carousel), merges, scores, writes `data/offers.json` and `data/history/<date>.json` |
-| `minspend.py` | Min-spend resolver (fine-print parser + table + heuristics) |
+| `minspend.py` | Min-spend resolver: fine-print parser (thresholds, commitments, requirement tags) + table + heuristics |
+| `build_static.py` | Builds `dist/` for static hosting (GitHub Pages, Cloudflare Pages…) |
+| `.github/workflows/pages.yml` | Scheduled scrape + publish to GitHub Pages every 6 hours |
+| `config.json` | Site name, referral link, custom domain |
+| `Dockerfile` | Container for the dynamic server |
 | `turbo.py` | Decoder for the server-rendered feed embedded in the homepage (fallback data source) |
 | `server.py` | Stdlib HTTP server: static site + `/api/offers`, `/api/refresh`, `/api/status`, `/api/history` |
 | `static/` | The web page (vanilla HTML/CSS/JS) |

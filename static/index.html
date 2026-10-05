@@ -6,7 +6,7 @@
 <title>Best Dollar Offers</title>
 <meta name="description" content="Capital One Shopping's fixed-dollar cashback offers, ranked by how much you get back per dollar you have to spend.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23d03027'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='white' font-family='system-ui' font-weight='700'%3E$%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header class="top">
@@ -66,6 +66,7 @@
     <ul>
       <li><strong>Value</strong> = cashback ÷ the cheapest purchase that unlocks it. $20 back on an $8 plan is 2.5× back. $100 back on a $200 subscription is only 0.5×, so it is listed but not on top.</li>
       <li><strong>Min spend</strong> is an estimate. Capital One does not publish it, so it comes from the offer's own fine print when it states a threshold, otherwise from an editable table of entry-level prices. Click any amount to set your own; it is remembered in this browser.</li>
+      <li><strong>Terms are read too.</strong> If the fine print says you must keep a service for 2 months, the min spend is doubled; "orders over $100" becomes the floor. Requirements like "new customers only" show as tags on each card.</li>
       <li><strong>Profit</strong> means the cashback is bigger than the purchase itself.</li>
       <li>Data comes from Capital One Shopping's public "Trending Offers" feed and refreshes automatically a few times a day. Offers are usually for new customers only; read the fine print before buying.</li>
     </ul>
@@ -84,6 +85,7 @@
         <span class="chips"></span>
       </div>
       <div class="tier-name muted"></div>
+      <div class="reqs"></div>
       <div class="facts">
         <div class="fact cash"><span class="big"></span><span class="lbl">cashback</span></div>
         <div class="fact spend"><button type="button" class="spend-btn" title="Click to set the purchase price you'd actually pay"></button><span class="lbl">min spend <span class="src"></span></span></div>
@@ -94,11 +96,12 @@
       <div class="verdict"></div>
     </div>
     <div class="actions">
-      <a class="btn primary go" target="_blank" rel="noopener">Get offer</a>
+      <button type="button" class="btn primary go">Get offer</button>
       <button type="button" class="btn ghost more" aria-expanded="false">Details</button>
     </div>
     <div class="details" hidden>
       <div class="tiers"></div>
+      <p class="reqlist"></p>
       <p class="note"></p>
       <p class="excl"></p>
       <p class="meta muted"></p>
@@ -106,6 +109,24 @@
   </article>
 </template>
 
-<script src="/app.js"></script>
+<div id="claim" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="claimTitle">
+  <div class="modal-card">
+    <button type="button" class="modal-x" id="claimClose" aria-label="Close">×</button>
+    <h2 id="claimTitle">Claim this on Capital One Shopping</h2>
+    <p class="muted" id="claimSub"></p>
+    <ol class="steps">
+      <li><strong>Sign in to Capital One Shopping</strong> (free). The cashback only tracks when you are logged in. <a id="claimJoin" href="https://capitaloneshopping.com/" target="_blank" rel="noopener">Join / sign in</a></li>
+      <li><strong>Open the merchant's page on Capital One Shopping</strong> and press <em>Get this offer</em> there. It takes you to the merchant with tracking attached.</li>
+      <li><strong>Buy what qualifies</strong> and meet the terms below. Cashback usually posts after the merchant confirms the purchase.</li>
+    </ol>
+    <div id="claimReqs" class="reqs"></div>
+    <p id="claimExcl" class="excl"></p>
+    <div class="modal-actions">
+      <a id="claimGo" class="btn primary" target="_blank" rel="noopener">Open on Capital One Shopping</a>
+      <button type="button" class="btn ghost" id="claimCancel">Not now</button>
+    </div>
+  </div>
+</div>
+<script src="app.js"></script>
 </body>
 </html>

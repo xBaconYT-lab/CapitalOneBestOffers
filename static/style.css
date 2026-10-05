@@ -180,3 +180,25 @@ h2 { font-size: 17px; }
 .podium .details { font-size: 12px; }
 .podium .tiers table { min-width: 400px; }
 .podium .card { align-content: start; }
+
+
+/* Requirement tags read from the fine print */
+.reqs { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+.reqs:empty { display: none; }
+.req { font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 6px; background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
+.req.hard { background: var(--warn-bg); color: var(--warn); border-color: color-mix(in srgb, var(--warn) 30%, transparent); }
+
+/* Claim modal */
+.modal { position: fixed; inset: 0; z-index: 20; background: rgba(0,0,0,.55); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.modal[hidden] { display: none; }
+.modal-card { position: relative; width: min(560px, 100%); max-height: 90vh; overflow: auto; background: var(--surface); color: var(--text); border: 1px solid var(--line); border-radius: 16px; padding: 22px 22px 18px; box-shadow: 0 20px 60px -20px rgba(0,0,0,.6); }
+.modal-card h2 { font-size: 19px; padding-right: 32px; }
+.modal-x { position: absolute; top: 10px; right: 10px; width: 34px; height: 34px; border-radius: 10px; border: 0; background: var(--surface-2); color: var(--muted); font-size: 20px; cursor: pointer; }
+.steps { margin: 12px 0 0; padding-left: 20px; font-size: 14px; }
+.steps li { margin: 8px 0; }
+.steps a { color: var(--ok); font-weight: 600; }
+.modal .reqs { margin-top: 14px; }
+.modal .excl { font-size: 12px; max-height: 110px; overflow: auto; margin-top: 10px; }
+.modal-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+.modal-actions .btn.primary { flex: 1; text-align: center; }
+.static-note { font-size: 12px; }

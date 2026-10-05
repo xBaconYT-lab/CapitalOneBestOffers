@@ -6,6 +6,8 @@
 
   const state = {
     data: null,
+    config: {},
+    staticMode: false,
     view: "fixed",
     sort: "value",
     query: "",
@@ -131,6 +133,7 @@
 
     const tierLabel = t.name ? `Best tier: ${t.name}` : (o.headline && !/^Save at/i.test(o.headline) ? o.headline : "");
     $(".tier-name", el).textContent = tierLabel;
+    renderReqs($(".reqs", el), o, 4);
 
     $(".fact.cash .big", el).textContent = o.reward_type === "fixed" ? money(t.amount) : `${t.amount}%`;
     const spendFact = $(".fact.spend", el);
@@ -160,8 +163,7 @@
     if (v.cls === "warn") fill.classList.add("warn");
 
     const go = $(".go", el);
-    go.href = o.href || o.event_href || "https://capitaloneshopping.com/";
-    go.textContent = o.event_href && !o.href ? "View event" : "Get offer";
+    go.addEventListener("click", () => openClaim(o));
 
     const more = $(".more", el);
     const details = $(".details", el);
@@ -199,8 +201,10 @@
     } else {
       tiers.innerHTML = o.tiers.length > 1 ? `<table><thead><tr><th>Tier</th><th>Rate</th></tr></thead><tbody>${o.tiers.map((t) => `<tr><td>${esc(t.name)}</td><td class="num">${t.amount}%</td></tr>`).join("")}</tbody></table>` : "";
     }
+    const tags = (o.conditions && o.conditions.tags) || [];
+    $(".reqlist", details).textContent = tags.length ? `Requirements: ${tags.join(" · ")}` : "";
     const note = $(".note", details);
-    note.textContent = o.reward_type === "fixed" ? `Min spend estimate: ${o.bestTier.min_spend_note || "—"}${o.parsed_threshold ? ` · Fine print threshold: $${fmt(o.parsed_threshold)}` : ""}` : "";
+    note.textContent = o.reward_type === "fixed" ? `Min spend estimate: ${o.bestTier.min_spend_note || "—"}` : "";
     $(".excl", details).textContent = o.exclusions ? `Fine print: ${o.exclusions}` : "No exclusions listed.";
     const meta = [];
     if (o.event_name) meta.push(`Event: ${o.event_name}`);
@@ -225,23 +229,82 @@
     input.addEventListener("blur", commit);
   }
 
+  const HARD = /^(Keep it|Order \$|Devices must|New customers|First order|No free trial|No renewals)/;
+  function renderReqs(container, o, limit) {
+    container.innerHTML = "";
+    const tags = (o.conditions && o.conditions.tags) || [];
+    const shown = limit ? tags.slice(0, limit) : tags;
+    shown.forEach((tag) => { const s = document.createElement("span"); s.className = `req ${HARD.test(tag) ? "hard" : ""}`; s.textContent = tag; container.appendChild(s); });
+    if (limit && tags.length > limit) { const s = document.createElement("span"); s.className = "req"; s.textContent = `+${tags.length - limit} more`; container.appendChild(s); }
+  }
+
+  const modal = $("#claim");
+  function openClaim(o) {
+    const t = o.bestTier;
+    $("#claimTitle").textContent = `Claim ${o.merchant} on Capital One Shopping`;
+    $("#claimSub").textContent = o.reward_type === "fixed"
+      ? `${money(t.amount)} back${t.name ? ` on ${t.name}` : ""} · estimated min spend ${money(t.minSpend)}${t.min_spend_months > 1 ? ` (${t.min_spend_months} months)` : ""}`
+      : `${o.cashback_text} back`;
+    const join = $("#claimJoin");
+    join.href = state.config.referral_url || "https://capitaloneshopping.com/";
+    join.textContent = state.config.referral_url ? "Join with referral link / sign in" : "Join / sign in";
+    renderReqs($("#claimReqs"), o, 0);
+    $("#claimExcl").textContent = o.exclusions ? `Fine print: ${o.exclusions}` : "";
+    const go = $("#claimGo");
+    const target = o.store_url || o.event_href || "https://capitaloneshopping.com/";
+    go.href = target;
+    go.textContent = o.store_url ? `Open ${o.merchant} on Capital One Shopping` : (o.event_href ? "Open this event on Capital One Shopping" : "Open Capital One Shopping");
+    modal.hidden = false;
+    go.focus();
+  }
+  function closeClaim() { modal.hidden = true; }
+  $("#claimClose").addEventListener("click", closeClaim);
+  $("#claimCancel").addEventListener("click", closeClaim);
+  modal.addEventListener("click", (e) => { if (e.target === modal) closeClaim(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) closeClaim(); });
+
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
   // ---------- data loading ----------
+  async function loadConfig() {
+    try { const r = await fetch("config.json", { cache: "no-store" }); if (r.ok) state.config = await r.json(); } catch {}
+    if (state.config.site_name) { document.title = state.config.site_name; $(".brand h1").textContent = state.config.site_name; }
+  }
+
+  async function fetchOffers(force) {
+    // Dynamic mode (server.py) first; fall back to the static file built by build_static.py.
+    if (!state.staticMode) {
+      try {
+        const res = await fetch(force ? "api/refresh" : "api/offers", { method: force ? "POST" : "GET", cache: "no-store" });
+        const ct = res.headers.get("content-type") || "";
+        if (ct.includes("json")) {
+          const data = await res.json();
+          if (!res.ok || !data.offers) throw new Error(data.error || data.last_error || `HTTP ${res.status}`);
+          return data;
+        }
+      } catch (err) {
+        if (force) throw err;
+      }
+      state.staticMode = true;
+    }
+    const res = await fetch("data/offers.json", { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status} loading data/offers.json`);
+    return res.json();
+  }
+
   async function load(force = false) {
     const btn = $("#refresh");
     btn.disabled = true; btn.textContent = force ? "↻ Refreshing…" : "↻ Loading…";
     $("#updated").textContent = force ? "Pulling today's offers from Capital One Shopping…" : "Loading…";
     try {
-      const res = await fetch(force ? "/api/refresh" : "/api/offers", { method: force ? "POST" : "GET", cache: "no-store" });
-      const data = await res.json();
-      if (!res.ok || !data.offers) throw new Error(data.error || data.last_error || `HTTP ${res.status}`);
+      const data = await fetchOffers(force);
       state.data = data;
       const when = new Date(data.generated_at);
       $("#updated").textContent = `Updated ${when.toLocaleString()} · ${data.fixed_offers} dollar offers of ${data.unique_offers} total`;
       const notice = $("#notice");
       if (data.status && data.status.last_error) { notice.hidden = false; notice.className = "notice"; notice.textContent = `Last refresh failed (${data.status.last_error}). Showing the previous data.`; }
       else notice.hidden = true;
+      if (state.staticMode) { btn.hidden = true; $("#updated").textContent += " · auto-updates every 6 hours"; }
       render();
     } catch (err) {
       const notice = $("#notice");
@@ -262,5 +325,5 @@
   $("#search").addEventListener("input", (e) => { state.query = e.target.value.trim(); render(); });
   $("#hideBig").addEventListener("change", (e) => { state.hideBig = e.target.checked; render(); });
   $("#refresh").addEventListener("click", () => load(true));
-  load();
+  loadConfig().then(() => load());
 })();
