@@ -202,3 +202,9 @@ h2 { font-size: 17px; }
 .modal-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
 .modal-actions .btn.primary { flex: 1; text-align: center; }
 .static-note { font-size: 12px; }
+
+
+/* Inline dollar limit inside the hide filter */
+#hideLimit { width: 64px; font: inherit; font-size: 13px; font-weight: 700; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 3px 6px; margin: 0 2px; }
+#hideLimit:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
+.check span { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 2px; }

@@ -12,6 +12,7 @@
     sort: "value",
     query: "",
     hideBig: false,
+    hideLimit: 100,
     overrides: loadOverrides(),
     expanded: new Set(),
   };
@@ -74,7 +75,8 @@
     if (!state.data) return [];
     let list = state.data.offers.map(evaluate);
     if (state.view === "fixed") list = list.filter((o) => o.reward_type === "fixed");
-    if (state.hideBig) list = list.filter((o) => o.reward_type !== "fixed" || o.bestTier.minSpend < 100);
+    if (state.view === "percent") list = list.filter((o) => o.reward_type !== "fixed");
+    if (state.hideBig) list = list.filter((o) => o.reward_type !== "fixed" || o.bestTier.minSpend <= state.hideLimit);
     if (state.query) {
       const q = state.query.toLowerCase();
       list = list.filter((o) => [o.merchant, o.domain, o.headline, o.pill, o.event_name, ...o.tiers.map((t) => t.name)].join(" ").toLowerCase().includes(q));
@@ -102,9 +104,11 @@
     const rest = showPodium ? list.slice(3) : list;
     top.forEach((o, i) => podium.appendChild(card(o, i + 1, true)));
     rest.forEach((o, i) => listEl.appendChild(card(o, i + 1 + top.length, false)));
-    $("#listTitle").textContent = state.view === "fixed" ? (showPodium ? "More dollar offers" : "Dollar offers") : "All offers";
+    const titles = { fixed: showPodium ? "More dollar offers" : "Dollar offers", percent: showPodium ? "More percent offers" : "Percent offers", all: showPodium ? "More offers" : "All offers" };
+    $("#listTitle").textContent = titles[state.view] || "Offers";
     $("#count").textContent = `${list.length} shown`;
-    if (!list.length) listEl.innerHTML = `<div class="empty">Nothing matches. ${state.view === "fixed" ? "Try “All offers” or clear the search." : "Try clearing the search."}</div>`;
+    $(".check").style.display = state.view === "percent" ? "none" : "";
+    if (!list.length) listEl.innerHTML = `<div class="empty">Nothing matches. ${state.view === "fixed" ? "Try “Percent offers”, raise the hide limit, or clear the search." : "Try clearing the search."}</div>`;
   }
 
   function card(o, rank, big) {
@@ -148,8 +152,8 @@
     } else {
       spendFact.innerHTML = `<span class="big">any</span><span class="lbl">min spend</span>`;
     }
-    $(".fact.ratio .big", el).textContent = ratioText(t.ratio);
-    $(".fact.ratio .lbl", el).textContent = o.reward_type === "fixed" ? "back per $1" : "back per $1";
+    $(".fact.ratio .big", el).textContent = o.reward_type === "fixed" ? ratioText(t.ratio) : `${Math.round(t.amount)}¢`;
+    $(".fact.ratio .lbl", el).textContent = "back per $1";
     const netEl = $(".fact.net .big", el);
     if (t.net == null) { netEl.textContent = "—"; } else { netEl.textContent = (t.net >= 0 ? "+" : "−") + money(Math.abs(t.net)); netEl.classList.add(t.net >= 0 ? "pos" : "neg"); }
 
@@ -323,7 +327,22 @@
   }));
   $("#sort").addEventListener("change", (e) => { state.sort = e.target.value; render(); });
   $("#search").addEventListener("input", (e) => { state.query = e.target.value.trim(); render(); });
-  $("#hideBig").addEventListener("change", (e) => { state.hideBig = e.target.checked; render(); });
+  // Hide-expensive filter: checkbox + editable dollar limit, both remembered in this browser.
+  const PREFS_KEY = "c1-filter-prefs";
+  try {
+    const prefs = JSON.parse(localStorage.getItem(PREFS_KEY) || "{}");
+    if (typeof prefs.hideBig === "boolean") state.hideBig = prefs.hideBig;
+    if (Number.isFinite(prefs.hideLimit) && prefs.hideLimit >= 0) state.hideLimit = prefs.hideLimit;
+  } catch {}
+  $("#hideBig").checked = state.hideBig;
+  $("#hideLimit").value = String(state.hideLimit);
+  const savePrefs = () => { try { localStorage.setItem(PREFS_KEY, JSON.stringify({ hideBig: state.hideBig, hideLimit: state.hideLimit })); } catch {} };
+  $("#hideBig").addEventListener("change", (e) => { state.hideBig = e.target.checked; savePrefs(); render(); });
+  $("#hideLimit").addEventListener("input", (e) => {
+    const v = parseFloat(e.target.value);
+    if (Number.isFinite(v) && v >= 0) { state.hideLimit = v; if (!state.hideBig) { state.hideBig = true; $("#hideBig").checked = true; } savePrefs(); render(); }
+  });
+  $("#hideLimit").addEventListener("click", (e) => e.preventDefault());
   $("#refresh").addEventListener("click", () => load(true));
   loadConfig().then(() => load());
 })();

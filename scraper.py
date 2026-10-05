@@ -249,10 +249,25 @@ def normalise(entry_source, batch, item):
     }
 
 
+GENERIC_DOMAINS = {"capitaloneshopping.com", "capitalone.com", ""}
+GENERIC_TYPES = {"wireless_bonus_offer", "generic_event_placement"}
+
+
+def is_generic(offer):
+    """Umbrella promos from Capital One itself (e.g. 'up to $175 wireless bonus') – not a merchant offer.
+
+    The merchants they point at (Boost, Visible, Total Wireless…) already appear individually, and their
+    minimum spend cannot be estimated, so they would rank unfairly. They are skipped.
+    """
+    return offer["domain"] in GENERIC_DOMAINS or offer.get("item_type") in GENERIC_TYPES
+
+
 def merge(normalised):
     """Dedupe by merchant domain + reward text; keep the richest record."""
     merged = {}
     for offer in normalised:
+        if is_generic(offer):
+            continue
         key = f"{offer['domain'] or offer['merchant'].lower()}|{offer['reward_type']}|{offer['amount']:g}"
         offer["pills"] = [offer["pill"]] if offer.get("pill") else []
         if key not in merged:
@@ -330,6 +345,9 @@ def run(calls=8, country="US", log=print):
     table = minspend.load_table()
     raw, store_domains = fetch_pool(calls=calls, country=country, log=log)
     normalised = [n for n in (normalise(*r) for r in raw) if n]
+    skipped = sorted({f"{n['merchant']} ({n['cashback_text']})" for n in normalised if is_generic(n)})
+    if skipped:
+        log(f"  skipped {len(skipped)} umbrella promo(s) from Capital One itself: {', '.join(skipped)}")
     offers = score(merge(normalised), table, store_domains)
     now = dt.datetime.now(dt.timezone.utc)
     today = now.astimezone().strftime("%Y-%m-%d")

@@ -29,7 +29,8 @@
   <section class="toolbar" aria-label="Filters">
     <div class="seg" role="tablist">
       <button class="seg-btn is-on" data-view="fixed" role="tab" aria-selected="true">Dollar offers</button>
-      <button class="seg-btn" data-view="all" role="tab" aria-selected="false">All offers</button>
+      <button class="seg-btn" data-view="percent" role="tab" aria-selected="false">Percent offers</button>
+      <button class="seg-btn" data-view="all" role="tab" aria-selected="false">All</button>
     </div>
     <label class="field">
       <span>Sort</span>
@@ -47,7 +48,7 @@
     </label>
     <label class="check">
       <input id="hideBig" type="checkbox">
-      <span>Hide offers that need a $100+ purchase</span>
+      <span>Hide offers that need more than $<input id="hideLimit" type="number" min="0" step="1" value="100" inputmode="numeric" aria-label="Maximum purchase in dollars"> to buy</span>
     </label>
   </section>
 
