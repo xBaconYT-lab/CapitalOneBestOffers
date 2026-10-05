@@ -18,6 +18,7 @@ def main():
     shutil.copytree(os.path.join(HERE, "static"), DIST)
     os.makedirs(os.path.join(DIST, "data"), exist_ok=True)
     shutil.copy2(offers, os.path.join(DIST, "data", "offers.json"))
+    shutil.copy2(os.path.join(HERE, "data", "min_spend.json"), os.path.join(DIST, "data", "min_spend.json"))
     shutil.copy2(os.path.join(HERE, "config.json"), os.path.join(DIST, "config.json"))
     open(os.path.join(DIST, ".nojekyll"), "w").close()
     with open(os.path.join(HERE, "config.json"), "r", encoding="utf-8") as fh:

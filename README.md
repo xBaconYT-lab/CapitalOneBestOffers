@@ -46,6 +46,18 @@ Alternatives: `Dockerfile` runs the dynamic server (with the Refresh button) on 
 (`/s/<domain>/coupon`) where they press *Get this offer* while signed in to their own account. The tracking links the
 feed hands out are tied to the session that fetched them, so they are not used for visitors.
 
+## Your Capital One *Offers* (card-linked) too
+
+Capital One runs two programs. **Capital One Shopping** (capitaloneshopping.com) is the free portal this site scrapes.
+**Capital One Offers** (capitaloneoffers.com/feed) are card-linked deals for cardholders, behind the bank login and
+personalised per card, so no server can fetch them. The **＋ My card offers** button therefore lets you paste them in from your own browser:
+
+- **Paste**: select-all / copy the Offers page and paste it into the dialog.
+
+Imported offers are tagged "Your card offer", ranked by the same rule (min spend from `data/min_spend.json`, no fine
+print is available), and stored in `localStorage` only. "Get offer" on them points to capitaloneoffers.com where you
+press *Add to card*.
+
 ## Where the "min spend" comes from
 
 Capital One Shopping does not publish a minimum purchase price, so each tier's estimate is resolved in this order:

@@ -46,6 +46,7 @@
       <span>Search</span>
       <input id="search" type="search" placeholder="Merchant, tier, keyword…" autocomplete="off">
     </label>
+    <button id="importBtn" class="btn" type="button" title="Add the card-linked offers from capitaloneoffers.com to this list (kept in your browser only)">＋ My card offers</button>
     <label class="check">
       <input id="hideBig" type="checkbox">
       <span>Hide offers that need more than $<input id="hideLimit" type="number" min="0" step="1" value="100" inputmode="numeric" aria-label="Maximum purchase in dollars"> to buy</span>
@@ -69,6 +70,7 @@
       <li><strong>Min spend</strong> is an estimate. Capital One does not publish it, so it comes from the offer's own fine print when it states a threshold, otherwise from an editable table of entry-level prices. Click any amount to set your own; it is remembered in this browser.</li>
       <li><strong>Terms are read too.</strong> If the fine print says you must keep a service for 2 months, the min spend is doubled; "orders over $100" becomes the floor. Requirements like "new customers only" show as tags on each card.</li>
       <li><strong>Profit</strong> means the cashback is bigger than the purchase itself.</li>
+      <li><strong>Your card offers.</strong> Capital One Offers (card-linked, capitaloneoffers.com) are personal and behind your login, so use "My card offers" to pull them from your own browser; they are ranked with the same rule and never leave your device.</li>
       <li>Data comes from Capital One Shopping's public "Trending Offers" feed and refreshes automatically a few times a day. Offers are usually for new customers only; read the fine print before buying.</li>
     </ul>
   </section>
@@ -110,6 +112,21 @@
   </article>
 </template>
 
+<div id="importer" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="importTitle">
+  <div class="modal-card">
+    <button type="button" class="modal-x" id="importClose" aria-label="Close">×</button>
+    <h2 id="importTitle">Add your Capital One card offers</h2>
+    <p class="muted">Capital One <strong>Offers</strong> (capitaloneoffers.com) are card-linked deals behind your bank login, so this site cannot fetch them. Grab them from your own browser instead. They stay in this browser only.</p>
+    <h3 class="import-h">Copy &amp; paste</h3>
+    <p class="muted small">On the Offers page press <kbd>⌘A</kbd> then <kbd>⌘C</kbd>, paste below. Lines like "Up to $37 back" are picked up with the merchant name above them.</p>
+    <textarea id="importText" rows="6" placeholder="Paste the Capital One Offers page here…" spellcheck="false"></textarea>
+    <div class="modal-actions">
+      <button type="button" class="btn primary" id="importRun">Import pasted offers</button>
+      <button type="button" class="btn ghost" id="importClear">Remove imported offers</button>
+    </div>
+    <p id="importStatus" class="muted small"></p>
+  </div>
+</div>
 <div id="claim" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="claimTitle">
   <div class="modal-card">
     <button type="button" class="modal-x" id="claimClose" aria-label="Close">×</button>

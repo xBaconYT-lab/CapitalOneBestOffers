@@ -103,6 +103,18 @@ class Handler(SimpleHTTPRequestHandler):
             self.send_header("Content-Length", str(len(data)))
             self.end_headers()
             return self.wfile.write(data)
+        if path.startswith("/data/") and path.endswith(".json"):
+            target = os.path.join(scraper.DATA_DIR, os.path.basename(path))
+            if not os.path.exists(target):
+                return self._json({"error": "not found"}, 404)
+            with open(target, "rb") as fh:
+                data = fh.read()
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Cache-Control", "no-cache")
+            self.send_header("Content-Length", str(len(data)))
+            self.end_headers()
+            return self.wfile.write(data)
         if path == "/favicon.ico":
             self.send_response(204)
             self.end_headers()

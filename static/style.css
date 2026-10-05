@@ -208,3 +208,14 @@ h2 { font-size: 17px; }
 #hideLimit { width: 64px; font: inherit; font-size: 13px; font-weight: 700; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 3px 6px; margin: 0 2px; }
 #hideLimit:focus { outline: 2px solid var(--ok); outline-offset: 1px; }
 .check span { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 2px; }
+
+
+/* Card-offer import */
+.import-h { font-size: 14px; margin-top: 14px; }
+.small { font-size: 12px; }
+.bookmarklet { display: inline-block; padding: 8px 14px; border-radius: 10px; background: var(--ok-bg); color: var(--ok); font-weight: 700; text-decoration: none; border: 1px dashed var(--ok); cursor: grab; }
+#importText { width: 100%; font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--text); background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; resize: vertical; }
+kbd { font: 11px ui-monospace, Menlo, monospace; background: var(--surface-2); border: 1px solid var(--line); border-radius: 5px; padding: 1px 5px; }
+.chip.card { background: #efe6ff; color: #6b3fd1; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .chip.card { background: #2a1f4a; color: #c3a6ff; } }
+:root[data-theme="dark"] .chip.card { background: #2a1f4a; color: #c3a6ff; }

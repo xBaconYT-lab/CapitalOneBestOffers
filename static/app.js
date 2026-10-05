@@ -8,6 +8,8 @@
     data: null,
     config: {},
     staticMode: false,
+    cardOffers: [],
+    minSpendTable: null,
     view: "fixed",
     sort: "value",
     query: "",
@@ -73,7 +75,7 @@
   // ---------- filtering / sorting ----------
   function visibleOffers() {
     if (!state.data) return [];
-    let list = state.data.offers.map(evaluate);
+    let list = state.data.offers.concat(state.cardOffers).map(evaluate);
     if (state.view === "fixed") list = list.filter((o) => o.reward_type === "fixed");
     if (state.view === "percent") list = list.filter((o) => o.reward_type !== "fixed");
     if (state.hideBig) list = list.filter((o) => o.reward_type !== "fixed" || o.bestTier.minSpend <= state.hideLimit);
@@ -129,6 +131,7 @@
 
     $(".merchant", el).textContent = o.merchant;
     const chips = $(".chips", el);
+    if (o.card_offer) chips.appendChild(chip("Your card offer", "card"));
     if (o.new_today) chips.appendChild(chip("NEW today", "new"));
     if (o.pill && !/rewards offer/i.test(o.pill)) chips.appendChild(chip(o.pill, "event"));
     const d = daysLeft(o.ends_at);
@@ -245,6 +248,7 @@
   const modal = $("#claim");
   function openClaim(o) {
     const t = o.bestTier;
+    if (o.card_offer) return openCardClaim(o, t);
     $("#claimTitle").textContent = `Claim ${o.merchant} on Capital One Shopping`;
     $("#claimSub").textContent = o.reward_type === "fixed"
       ? `${money(t.amount)} back${t.name ? ` on ${t.name}` : ""} · estimated min spend ${money(t.minSpend)}${t.min_spend_months > 1 ? ` (${t.min_spend_months} months)` : ""}`
@@ -261,13 +265,148 @@
     modal.hidden = false;
     go.focus();
   }
-  function closeClaim() { modal.hidden = true; }
+  function openCardClaim(o, t) {
+    $("#claimTitle").textContent = `Add the ${o.merchant} offer to your card`;
+    $("#claimSub").textContent = `${o.cashback_text} back · Capital One Offers (card-linked)${o.channel ? ` · ${o.channel}` : ""}`;
+    $(".steps", modal).innerHTML = `
+      <li><strong>Open Capital One Offers</strong> and sign in to your Capital One account.</li>
+      <li><strong>Find ${esc(o.merchant)}</strong> and press <em>Add to card</em>. Offers are personal, so it may not be shown to everyone.</li>
+      <li><strong>Pay with that Capital One card</strong>${o.channel ? ` (${esc(o.channel)})` : ""}. The cashback posts to your statement after the purchase settles.</li>`;
+    $("#claimJoin").href = "https://capitaloneoffers.com/feed";
+    renderReqs($("#claimReqs"), o, 0);
+    $("#claimExcl").textContent = "Terms are shown on the offer itself at capitaloneoffers.com. Imported offers keep no fine print, so the min spend here is only the merchant's entry price.";
+    const go = $("#claimGo");
+    go.href = "https://capitaloneoffers.com/feed";
+    go.textContent = "Open Capital One Offers";
+    modal.hidden = false;
+    go.focus();
+  }
+  const defaultSteps = $(".steps", modal).innerHTML;
+  function closeClaim() { modal.hidden = true; $(".steps", modal).innerHTML = defaultSteps; }
   $("#claimClose").addEventListener("click", closeClaim);
   $("#claimCancel").addEventListener("click", closeClaim);
   modal.addEventListener("click", (e) => { if (e.target === modal) closeClaim(); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.hidden) closeClaim(); });
 
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  // ---------- Capital One Offers (card-linked) import ----------
+  const CARD_KEY = "c1-card-offers";
+  const BACK_RE = /^(up to\s+)?\$?\s?(\d+(?:\.\d+)?)\s*(%)?\s*back\.?$/i;
+  const CHANNEL_RE = /^(online|in[- ]store|in[- ]app|in[- ]store\s*&\s*(online|in[- ]app)|online\s*&\s*in[- ]store)$/i;
+  const NOISE_RE = /^(get this offer|added( to card)?|activated?|limited availability\.?|today'?s top offer\.?.*|new offers revealed daily|featured offers for you|additional offers for you|add offers.*|earn by purchasing.*|category|new|apparel|travel & entertainment|home|general retail|.*\b\d{1,2}\/\d{2}\b.*|\d+ of \d+ activated)$/i;
+
+  function loadCardOffers() { try { return JSON.parse(localStorage.getItem(CARD_KEY) || "[]"); } catch { return []; } }
+  function saveCardOffers() { try { localStorage.setItem(CARD_KEY, JSON.stringify(state.cardOffers)); } catch {} }
+  const norm = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+
+  async function loadMinSpendTable() {
+    try { const r = await fetch("data/min_spend.json", { cache: "no-store" }); if (r.ok) state.minSpendTable = await r.json(); } catch {}
+    if (state.minSpendTable && !state.minSpendTable._index) {
+      const idx = {};
+      for (const [domain, entry] of Object.entries(state.minSpendTable.merchants || {})) {
+        idx[norm(domain)] = domain;
+        idx[norm(domain.split(".")[0])] = idx[norm(domain.split(".")[0])] || domain;
+        (entry.aliases || []).forEach((a) => { idx[norm(a)] = idx[norm(a)] || domain; });
+      }
+      state.minSpendTable._index = idx;
+    }
+  }
+
+  function estimateMinSpend(merchant) {
+    const t = state.minSpendTable;
+    if (!t) return { min_spend: 50, source: "unknown", note: "Estimate table not loaded", domain: "" };
+    const domain = t._index[norm(merchant)];
+    if (domain) { const e = t.merchants[domain]; return { min_spend: +e.min_spend, source: "curated", note: e.note || "", domain }; }
+    for (const rule of t.merchant_keywords || []) {
+      if (new RegExp(rule.match, "i").test(merchant)) return { min_spend: +rule.min_spend, source: "estimated", note: rule.note || "", domain: "" };
+    }
+    return { min_spend: +(t.fallback || 50), source: "unknown", note: "No estimate available – set it yourself", domain: "" };
+  }
+
+  function makeCardOffer(merchant, text, channel) {
+    const m = String(text || "").trim().match(BACK_RE);
+    if (!m || !merchant) return null;
+    const amount = parseFloat(m[2]);
+    const isPct = !!m[3];
+    const est = estimateMinSpend(merchant);
+    const minSpend = isPct ? null : est.min_spend;
+    const tier = { name: "", amount, min_spend: minSpend, min_spend_base: minSpend, min_spend_months: 1,
+      min_spend_source: isPct ? "n/a" : est.source, min_spend_note: isPct ? "Percentage offer" : est.note,
+      ratio: isPct ? amount / 100 : (minSpend > 0 ? amount / minSpend : null), net: isPct ? null : amount - (minSpend || 0) };
+    const tags = ["Add to card first"];
+    if (channel) tags.unshift(channel);
+    return {
+      id: `card|${norm(merchant)}|${isPct ? "pct" : "usd"}|${amount}`,
+      merchant: merchant.trim(), domain: est.domain, channel: channel || "",
+      logo: est.domain ? `https://images.capitaloneshopping.com/api/v1/logos?domain=${est.domain}&height=400&type=cropped&fallback=true` : null,
+      cashback_text: `${m[1] ? "up to " : ""}${isPct ? `${amount}%` : `$${amount}`}`,
+      reward_type: isPct ? "percentage" : "fixed", amount, max_payout: null,
+      tiers: [tier], best_tier_index: 0, headline: `Capital One Offers${channel ? ` · ${channel}` : ""}`,
+      pill: null, filter_label: "Capital One Offers", item_type: "card_offer", item_level: "merchant",
+      sources: ["capitaloneoffers.com"], ends_at: null, exclusions: "", parsed_threshold: null,
+      conditions: { tags, threshold: null, commitment_months: null }, href: null, event_href: null,
+      store_url: "https://capitaloneoffers.com/feed", card_offer: true, imported_at: new Date().toISOString(),
+    };
+  }
+
+  function parseCardText(text) {
+    const lines = String(text || "").split(/\r?\n/).map((s) => s.trim()).filter(Boolean);
+    const found = [];
+    lines.forEach((line, i) => {
+      if (!BACK_RE.test(line)) return;
+      let merchant = null, channel = null;
+      for (let j = i - 1; j >= Math.max(0, i - 4); j--) {
+        const l = lines[j];
+        if (BACK_RE.test(l)) break;
+        if (CHANNEL_RE.test(l)) { channel = channel || l; continue; }
+        if (NOISE_RE.test(l)) continue;
+        merchant = l; break;
+      }
+      for (let j = i + 1; j <= Math.min(lines.length - 1, i + 2) && !channel; j++) if (CHANNEL_RE.test(lines[j])) channel = lines[j];
+      if (merchant) found.push({ merchant, text: line, channel });
+    });
+    return found;
+  }
+
+  function addCardOffers(items) {
+    const byId = new Map(state.cardOffers.map((o) => [o.id, o]));
+    let added = 0;
+    for (const it of items) {
+      const o = makeCardOffer(it.merchant, it.text, it.channel);
+      if (!o) continue;
+      if (!byId.has(o.id)) added++;
+      byId.set(o.id, o);
+    }
+    state.cardOffers = Array.from(byId.values());
+    saveCardOffers();
+    render();
+    updateStatusLine();
+    return added;
+  }
+
+  function updateStatusLine() {
+    const el = $("#updated");
+    el.textContent = el.textContent.replace(/ · \d+ card offers? imported/, "");
+    if (state.cardOffers.length) el.textContent += ` · ${state.cardOffers.length} card offer${state.cardOffers.length === 1 ? "" : "s"} imported`;
+  }
+
+  const importer = $("#importer");
+  $("#importBtn").addEventListener("click", () => {
+    $("#importStatus").textContent = state.cardOffers.length ? `${state.cardOffers.length} card offers currently imported.` : "";
+    importer.hidden = false;
+  });
+  $("#importClose").addEventListener("click", () => { importer.hidden = true; });
+  importer.addEventListener("click", (e) => { if (e.target === importer) importer.hidden = true; });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !importer.hidden) importer.hidden = true; });
+  $("#importRun").addEventListener("click", () => {
+    const items = parseCardText($("#importText").value);
+    if (!items.length) { $("#importStatus").textContent = "No offers recognised. Make sure lines like “Up to $37 back” are in the pasted text."; return; }
+    const added = addCardOffers(items);
+    $("#importStatus").textContent = `Imported ${items.length} offers (${added} new): ${items.slice(0, 6).map((i) => i.merchant).join(", ")}${items.length > 6 ? "…" : ""}.`;
+    $("#importText").value = "";
+  });
+  $("#importClear").addEventListener("click", () => { state.cardOffers = []; saveCardOffers(); render(); updateStatusLine(); $("#importStatus").textContent = "Imported card offers removed."; });
 
   // ---------- data loading ----------
   async function loadConfig() {
@@ -344,5 +483,5 @@
   });
   $("#hideLimit").addEventListener("click", (e) => e.preventDefault());
   $("#refresh").addEventListener("click", () => load(true));
-  loadConfig().then(() => load());
+  loadConfig().then(loadMinSpendTable).then(() => { state.cardOffers = loadCardOffers(); return load(); }).then(() => updateStatusLine());
 })();
